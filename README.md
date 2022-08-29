@@ -53,6 +53,6 @@ Thread1 listen COM port and convert data to UTF-8
 
 Thread2 send data to serially connected hardware (Arduino, esp32, raspberry pi, etc.) also, control the buttons
 
-# PyQt5
-The program is using Pyqt5 instead of the 4th version of PyQt.
+# PyQt6
+The program is using Pyqt6 instead of the 5th version of PyQt.
 
