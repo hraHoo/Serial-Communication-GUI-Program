@@ -1,11 +1,11 @@
 __author__ = 'Mehmet Cagri Aksoy - github.com/mcagriaksoy'
 
 import sys, serial, serial.tools.list_ports, warnings
-from PyQt5.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot
 import time
-from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, \
+from PyQt6.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, \
     QListView
-from PyQt5.uic import loadUi
+from PyQt6.uic import loadUi
 
 #Port Detection START
 ports = [
@@ -27,6 +27,7 @@ ser = serial.Serial(ports[0],9600)
 
 class Worker(QObject):
     finished = pyqtSignal()
+    # intReady = pyqtSignal(int)
     intReady = pyqtSignal(str)
 
     @pyqtSlot()
@@ -36,10 +37,13 @@ class Worker(QObject):
 
     def work(self):
         while self.working:
-            line = ser.readline().decode('utf-8')
-            print(line)
-            time.sleep(0.1)
-            self.intReady.emit(line)
+            char = ser.read()
+            # line = ser.readline().decode('utf-8')
+            h = char.hex()
+            print(char)
+            # time.sleep(0.1)
+            self.intReady.emit(h)
+            # self.intReady.emit(line)
 
         self.finished.emit()
 
@@ -48,7 +52,7 @@ class qt(QMainWindow):
     def __init__(self):
 
         QMainWindow.__init__(self)
-        loadUi('qt.ui', self)
+        loadUi('desktop_v0_1\\test_serial.ui', self)
 
         self.thread = None
         self.worker = None
@@ -81,7 +85,9 @@ class qt(QMainWindow):
         self.worker.working = False
 
     def onIntReady(self, i):
-        self.textEdit_3.append("{}".format(i))
+        # self.textEdit_3.append("{}".format(i))
+        self.textEdit_3.insertPlainText("{}".format(i))
+        
         print(i)
 
     # Save the settings
@@ -110,7 +116,7 @@ class qt(QMainWindow):
         self.label_5.setText("CONNECTED!")
         self.label_5.setStyleSheet('color: green')
         x = 1
-        self.textEdit_3.setText(":")
+        # self.textEdit_3.setText(":")
 
     def on_pushButton_3_clicked(self):
         # Send data from serial port:
@@ -122,7 +128,7 @@ def run():
     app = QApplication(sys.argv)
     widget = qt()
     widget.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
     run()
